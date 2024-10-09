@@ -55,7 +55,7 @@ public class GameLogicTest {
         method.setAccessible(true);
 
         assertTrue((Boolean) method.invoke(gameLogic, 'а'));
-        assertTrue((Boolean) method.invoke(gameLogic, 'я'));
+        assertTrue((Boolean) method.invoke(gameLogic, 'з'));
     }
 
     @Test
