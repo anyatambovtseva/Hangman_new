@@ -30,14 +30,11 @@ public class Main
             System.out.println("Ошибка при загрузке слов: " + e.getMessage());
             return;
         }
-
         gameOutput.printWelcomeMessage();
-
         boolean playAgain;
         do
         {
             playAgain = false;
-
             List<String> words = wordLoader.getWords();
             String wordToGuess = words.get(new Random().nextInt(words.size()));
             GameLogic gameLogic = new GameLogic(wordToGuess);
@@ -46,7 +43,6 @@ public class Main
             {
                 gameOutput.printCurrentState(gameLogic.getGuessedWord(), gameLogic.getRemainingTries());
                 String input = userDialog.getInput("Введите букву: ");
-
                 if (input.equals("/help"))
                 {
                     gameOutput.printHelpMessage();
@@ -58,12 +54,11 @@ public class Main
                     userDialog.close();
                     return;
                 }
-                if (input.length() != 1 || !isValidCharacter(input.charAt(0)))
+                if (input.length() != 1 || !gameLogic.isValidCharacter(input.charAt(0)))
                 {
                     System.out.println("Пожалуйста, введите одну букву русского алфавита.");
                     continue;
                 }
-
                 char guess = input.charAt(0);
                 if (!gameLogic.makeGuess(guess))
                 {
@@ -74,9 +69,7 @@ public class Main
                     System.out.println("Правильно!");
                 }
             }
-
             gameOutput.printResult(wordToGuess, gameLogic.isGameWon());
-
             String response = userDialog.getInput("Хотите сыграть еще раз? (да/нет): ");
             if (response.equals("да"))
             {
@@ -84,13 +77,7 @@ public class Main
             }
         }
         while (playAgain);
-
         userDialog.close();
-    }
-
-    private boolean isValidCharacter(char c)
-    {
-        return c >= 'а' && c <= 'я';
     }
 
     public static void main(String[] args)

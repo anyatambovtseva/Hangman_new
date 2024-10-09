@@ -24,7 +24,6 @@ public class GameLogic
             return false;
         }
         guessedLetters[guess - 'а'] = true;
-
         if (wordToGuess.indexOf(guess) >= 0)
         {
             for (int i = 0; i < wordToGuess.length(); i++)
@@ -61,5 +60,10 @@ public class GameLogic
     public int getRemainingTries()
     {
         return MAX_TRIES - tries;
+    }
+
+    public boolean isValidCharacter(char c)
+    {
+        return c >= 'а' && c <= 'я';
     }
 }
