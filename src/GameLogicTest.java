@@ -34,7 +34,6 @@ public class GameLogicTest {
 
     @Test
     public void testIsGameWon() {
-        // Угадываем все буквы
         for (char c : "кошка".toCharArray()) {
             gameLogic.makeGuess(c);
         }
@@ -50,22 +49,19 @@ public class GameLogicTest {
 
 
     @Test
-    void testIsValidCharacter_ValidLowercase() throws Exception {
-        Method method = GameLogic.class.getDeclaredMethod("isValidCharacter", char.class);
-        method.setAccessible(true);
-
-        assertTrue((Boolean) method.invoke(gameLogic, 'а'));
-        assertTrue((Boolean) method.invoke(gameLogic, 'з'));
+    void testIsValidCharacter_ValidLowercase() {
+        assertTrue(gameLogic.isValidCharacter('а'));
+        assertTrue(gameLogic.isValidCharacter('ш'));
     }
+
 
     @Test
-    void testIsValidCharacter_InvalidCharacter() throws Exception {
-        Method method = GameLogic.class.getDeclaredMethod("isValidCharacter", char.class);
-        method.setAccessible(true);
-
-        assertFalse((Boolean) method.invoke(gameLogic, 'a'));
-        assertFalse((Boolean) method.invoke(gameLogic, '1'));
-        assertFalse((Boolean) method.invoke(gameLogic, ' '));
-        assertFalse((Boolean) method.invoke(gameLogic, 'I'));
+    void testIsValidCharacter_InvalidCharacter() {
+        assertFalse(gameLogic.isValidCharacter('a'));
+        assertFalse(gameLogic.isValidCharacter('1'));
+        assertFalse(gameLogic.isValidCharacter(' '));
+        assertFalse(gameLogic.isValidCharacter('I'));
+        assertFalse(gameLogic.isValidCharacter('/'));
     }
+
 }
