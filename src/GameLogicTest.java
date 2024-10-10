@@ -50,14 +50,14 @@ public class GameLogicTest {
 
     @Test
     void testIsValidCharacter_ValidLowercase() {
-        assertTrue(gameLogic.isValidCharacter('а'));
         assertTrue(gameLogic.isValidCharacter('ш'));
+        assertTrue(gameLogic.isValidCharacter('ё'));
     }
 
 
     @Test
     void testIsValidCharacter_InvalidCharacter() {
-        assertFalse(gameLogic.isValidCharacter('a'));
+        assertFalse(gameLogic.isValidCharacter('r'));
         assertFalse(gameLogic.isValidCharacter('1'));
         assertFalse(gameLogic.isValidCharacter(' '));
         assertFalse(gameLogic.isValidCharacter('I'));

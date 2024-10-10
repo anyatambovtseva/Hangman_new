@@ -7,23 +7,24 @@ public class GameLogic
     private String wordToGuess;
     private StringBuilder guessedWord;
     private int tries;
-    private boolean[] guessedLetters;
+    private GuessedLetters guessedLetters;
 
     public GameLogic(String wordToGuess)
     {
         this.wordToGuess = wordToGuess;
         this.guessedWord = new StringBuilder("_".repeat(wordToGuess.length()));
         this.tries = 0;
-        this.guessedLetters = new boolean[33];
+        this.guessedLetters = new GuessedLetters();
     }
 
     public boolean makeGuess(char guess)
     {
-        if (guessedLetters[guess - 'а'])
+        if (guessedLetters.hasLetter(guess))
         {
             return false;
         }
-        guessedLetters[guess - 'а'] = true;
+        guessedLetters.addLetter(guess);
+
         if (wordToGuess.indexOf(guess) >= 0)
         {
             for (int i = 0; i < wordToGuess.length(); i++)
@@ -64,6 +65,6 @@ public class GameLogic
 
     public boolean isValidCharacter(char c)
     {
-        return c >= 'а' && c <= 'я';
+        return (c >= 'а' && c <= 'я') || c == 'ё';
     }
 }
