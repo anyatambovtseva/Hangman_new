@@ -1,5 +1,4 @@
-import java.util.List;
-import java.util.Random;
+package pavdvf;
 
 public class GameLogic
 {

@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pavdvf.WordLoader;
 
 import java.io.IOException;
 
