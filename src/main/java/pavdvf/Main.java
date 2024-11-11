@@ -75,6 +75,7 @@ public class Main
                 playAgain = true;
             }
         }
+
         while (playAgain);
         userDialog.close();
     }

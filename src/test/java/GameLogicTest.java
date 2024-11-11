@@ -4,43 +4,51 @@ import pavdvf.GameLogic;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GameLogicTest {
+public class GameLogicTest
+{
     private GameLogic gameLogic;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp()
+    {
         gameLogic = new GameLogic("кошка");
     }
 
     @org.testng.annotations.Test
-    public void testInitialGuessedWord() {
+    public void testInitialGuessedWord()
+    {
         assertEquals("_____", gameLogic.getGuessedWord());
     }
 
     @Test
-    public void testMakeGuessCorrect() {
+    public void testMakeGuessCorrect()
+    {
         assertTrue(gameLogic.makeGuess('к'));
         assertEquals("к__к_", gameLogic.getGuessedWord());
         assertEquals(5, gameLogic.getRemainingTries());
     }
 
     @Test
-    public void testMakeGuessIncorrect() {
+    public void testMakeGuessIncorrect()
+    {
         assertFalse(gameLogic.makeGuess('х'));
         assertEquals("_____", gameLogic.getGuessedWord());
         assertEquals(4, gameLogic.getRemainingTries());
     }
 
     @Test
-    public void testIsGameWon() {
-        for (char c : "кошка".toCharArray()) {
+    public void testIsGameWon()
+    {
+        for (char c : "кошка".toCharArray())
+        {
             gameLogic.makeGuess(c);
         }
         assertTrue(gameLogic.isGameWon());
     }
 
     @Test
-    public void testRemainingTriesAfterIncorrectGuesses() {
+    public void testRemainingTriesAfterIncorrectGuesses()
+    {
         gameLogic.makeGuess('х');
         gameLogic.makeGuess('ф');
         assertEquals(3, gameLogic.getRemainingTries());
@@ -48,14 +56,16 @@ public class GameLogicTest {
 
 
     @Test
-    void testIsValidCharacter_ValidLowercase() {
+    void testIsValidCharacter_ValidLowercase()
+    {
         assertTrue(gameLogic.isValidCharacter('ш'));
         assertTrue(gameLogic.isValidCharacter('ё'));
     }
 
 
     @Test
-    void testIsValidCharacter_InvalidCharacter() {
+    void testIsValidCharacter_InvalidCharacter()
+    {
         assertFalse(gameLogic.isValidCharacter('r'));
         assertFalse(gameLogic.isValidCharacter('1'));
         assertFalse(gameLogic.isValidCharacter(' '));

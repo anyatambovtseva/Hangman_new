@@ -2,6 +2,7 @@ package pavdvf;
 
 import java.util.Scanner;
 
+
 public class UserDialog
 {
     private Scanner scanner = new Scanner(System.in);

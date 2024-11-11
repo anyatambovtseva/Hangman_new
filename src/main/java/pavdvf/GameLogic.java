@@ -43,6 +43,7 @@ public class GameLogic
     }
 
     public boolean isGameWon()
+
     {
         return guessedWord.toString().equals(wordToGuess);
     }
