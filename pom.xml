@@ -14,8 +14,13 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
-
   <dependencies>
+
+    <dependency>
+      <groupId>org.telegram</groupId>
+      <artifactId>telegrambots</artifactId>
+      <version>6.0.1</version> <!-- Убедитесь, что используете последнюю версию -->
+    </dependency>
 
     <!-- Telegram Bot API -->
     <dependency>
