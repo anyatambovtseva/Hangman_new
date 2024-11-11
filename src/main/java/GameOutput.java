@@ -1,5 +1,3 @@
-package pavdvf;
-
 public class GameOutput
 {
 

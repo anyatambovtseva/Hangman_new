@@ -1,5 +1,3 @@
-package pavdvf;
-
 import java.util.Scanner;
 
 
