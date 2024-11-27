@@ -1,5 +1,5 @@
-import java.util.List;
-import java.util.Random;
+package pavdvf;
+
 
 public class GameLogic
 {
@@ -44,7 +44,6 @@ public class GameLogic
     }
 
     public boolean isGameWon()
-
     {
         return guessedWord.toString().equals(wordToGuess);
     }

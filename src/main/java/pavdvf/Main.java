@@ -1,3 +1,9 @@
+package pavdvf;
+
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+
 import java.io.IOException;
 
 import java.util.List;
@@ -18,6 +24,15 @@ public class Main
 
     public void start()
     {
+        try {
+            // Создаем экземпляр TelegramBotsApi с использованием DefaultBotSession
+            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+            botsApi.registerBot(new TGBot());
+
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+
         try
         {
             wordLoader.loadWords("виселица.txt");
