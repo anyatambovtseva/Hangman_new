@@ -1,28 +1,43 @@
 package pavdvf;
+
 import java.io.*;
 import java.util.Properties;
-
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
-public class TGBot extends TelegramLongPollingBot{
+public class TGBot extends TelegramLongPollingBot {
     private String botUsername;
     private String botToken;
-    public TGBot()
-    {
+    private GameLogic gameLogic;
+    private List<String> words;
+
+    public TGBot() {
         Properties props = new Properties();
-        try (InputStream input = new FileInputStream("src/main/resources/bot.properties"))
-        {
+        try (InputStream input = new FileInputStream("src/main/resources/bot.properties")) {
             props.load(input);
             botUsername = props.getProperty("bot.name");
             botToken = props.getProperty("bot.token");
+            loadWords("src/main/resources/виселица.txt");
         } catch (IOException e) {
             e.printStackTrace();
             botUsername = botToken = "";
         }
+    }
+
+    private void loadWords(String filePath) throws IOException {
+        words = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            words.add(line.trim());
+        }
+        reader.close();
     }
 
     @Override
@@ -43,36 +58,73 @@ public class TGBot extends TelegramLongPollingBot{
 
             switch (messageText) {
                 case "/start":
-                    printWelcomeMessage(chatId);
+                    startGame(chatId);
                     break;
                 case "/help":
                     printHelpMessage(chatId);
                     break;
                 case "/exit":
-                    // Логика выхода из игры (если требуется)
-                    sendMessage(chatId, "Вы вышли из игры.");
+                    endGame(chatId);
                     break;
                 default:
-                    // Логика обработки ввода пользователя в игре
-                    // Например, обработка попытки угадать букву
+                    handleGuess(chatId, messageText);
                     break;
             }
         }
     }
 
-    private void sendMessage(long chatId, String text) {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(text);
-        try {
-            execute(message);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
+    private void startGame(long chatId) {
+        String wordToGuess = words.get(new Random().nextInt(words.size()));
+        gameLogic = new GameLogic(wordToGuess);
+        printCurrentState(chatId);
+    }
+
+    private void handleGuess(long chatId, String messageText) {
+        if (gameLogic == null) {
+            sendMessage(chatId, "Сначала начните игру с командой /start.");
+            return;
+        }
+        if (messageText.length() == 1) {
+            char guessedLetter = messageText.charAt(0);
+            boolean correctGuess = gameLogic.guessLetter(guessedLetter);
+
+            if (!correctGuess) {
+                sendMessage(chatId, "Эта буква уже была угадана или ее нет в слове.");
+            }
+
+            if (gameLogic.isGameWon()) {
+                printResult(chatId, true);
+                gameLogic = null;
+            } else if (gameLogic.isGameLost()) {
+                printResult(chatId, false);
+                gameLogic = null;
+            } else {
+                printCurrentState(chatId);
+            }
+        } else {
+            sendMessage(chatId, "Пожалуйста, вводите только одну букву.");
         }
     }
 
-    private void printWelcomeMessage(long chatId) {
-        sendMessage(chatId, "Добро пожаловать в игру Виселица!");
+    private void endGame(long chatId) {
+        gameLogic = null;
+        sendMessage(chatId, "Вы вышли из игры. Чтобы начать заново, введите /start.");
+    }
+
+    private void printCurrentState(long chatId) {
+        String currentState = gameLogic.getCurrentState();
+        int remainingTries = gameLogic.getRemainingTries();
+        String message = "Слово: " + currentState + "\nПопытки оставшиеся: " + remainingTries;
+        sendMessage(chatId, message);
+    }
+
+    private void printResult(long chatId, boolean isWon) {
+        String wordToGuess = gameLogic.getWordToGuess();
+        if (isWon) {
+            sendMessage(chatId, "Поздравляем! Вы угадали слово: " + wordToGuess);
+        } else {
+            sendMessage(chatId, "Вы проиграли! Загаданное слово было: " + wordToGuess);
+        }
     }
 
     private void printHelpMessage(long chatId) {
@@ -85,17 +137,14 @@ public class TGBot extends TelegramLongPollingBot{
         sendMessage(chatId, helpMessage);
     }
 
-    public void printCurrentState(long chatId, String guessedWord, int remainingTries) {
-        String currentState = "Слово: " + guessedWord + "\n" +
-                "Попытки оставшиеся: " + remainingTries;
-        sendMessage(chatId, currentState);
-    }
-
-    public void printResult(long chatId, String wordToGuess, boolean isWon) {
-        if (isWon) {
-            sendMessage(chatId, "Поздравляем! Вы угадали слово: " + wordToGuess);
-        } else {
-            sendMessage(chatId, "Вы проиграли! Загаданное слово было: " + wordToGuess);
+    private void sendMessage(long chatId, String text) {
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(text);
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
         }
     }
 }
