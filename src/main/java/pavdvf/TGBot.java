@@ -6,17 +6,17 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.HashMap;
 
 public class TGBot extends TelegramLongPollingBot {
     private String botUsername;
     private String botToken;
     private WordLoader wordLoader;
     private GameOutput gameOutput;
-    private GameLogic gameLogic;
+
+    private HashMap<Long, GameLogic> userGames;
 
     public TGBot() {
         Properties props = new Properties();
@@ -27,6 +27,7 @@ public class TGBot extends TelegramLongPollingBot {
             wordLoader = new WordLoader();
             gameOutput = new GameOutput();
             wordLoader.loadWords("виселица.txt");
+            userGames = new HashMap<>();
         } catch (IOException e) {
             e.printStackTrace();
             botUsername = botToken = "";
@@ -48,7 +49,6 @@ public class TGBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
-
             switch (messageText) {
                 case "/start":
                     startGame(chatId);
@@ -69,12 +69,14 @@ public class TGBot extends TelegramLongPollingBot {
     private void startGame(long chatId) {
         List<String> words = wordLoader.getWords();
         String wordToGuess = words.get(new Random().nextInt(words.size()));
-        gameLogic = new GameLogic(wordToGuess);
+        GameLogic gameLogic = new GameLogic(wordToGuess);
+        userGames.put(chatId, gameLogic);
         sendMessage(chatId, gameOutput.getWelcomeMessage());
         printCurrentState(chatId);
     }
 
     private void handleGuess(long chatId, String messageText) {
+        GameLogic gameLogic = userGames.get(chatId);
         if (gameLogic == null) {
             sendMessage(chatId, "Сначала начните игру с командой /start.");
             return;
@@ -101,33 +103,35 @@ public class TGBot extends TelegramLongPollingBot {
         } else {
             sendMessage(chatId, "Правильно!");
         }
-
         if (gameLogic.isGameWon()) {
             printResult(chatId, true);
-            gameLogic = null; // Завершение игры
+            userGames.remove(chatId);
         } else if (gameLogic.isGameOver()) {
             printResult(chatId, false);
-            gameLogic = null; // Завершение игры
+            userGames.remove(chatId);
         } else {
             printCurrentState(chatId);
         }
     }
 
     private void endGame(long chatId) {
-        gameLogic = null;
+        userGames.remove(chatId);
         sendMessage(chatId, "Вы вышли из игры. Чтобы начать заново, введите /start.");
     }
+
     private void printCurrentState(long chatId) {
-        String currentState = gameLogic.getGuessedWord();
-        int remainingTries = gameLogic.getRemainingTries();
-        String message = gameOutput.getCurrentState(currentState, remainingTries);
-        sendMessage(chatId, message);
+        GameLogic gameLogic = userGames.get(chatId);
+        if (gameLogic != null) {
+            sendMessage(chatId, gameOutput.getCurrentState(gameLogic.getCurrentState(), gameLogic.getRemainingTries()));
+        }
     }
 
-    private void printResult(long chatId, boolean isWon) {
-        String wordToGuess = gameLogic.getWordToGuess();
-        String message = gameOutput.getResult(wordToGuess, isWon);
-        sendMessage(chatId, message);
+    private void printResult(long chatId, boolean isWin) {
+        if (isWin) {
+            sendMessage(chatId, "Поздравляем! Вы выиграли!");
+        } else {
+            sendMessage(chatId, "Игра окончена. Вы проиграли.");
+        }
     }
 
     private void sendMessage(long chatId, String text) {

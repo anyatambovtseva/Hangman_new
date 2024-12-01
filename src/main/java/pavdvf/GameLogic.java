@@ -1,9 +1,5 @@
 package pavdvf;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 public class GameLogic {
     private final int MAX_TRIES = 5;
     private String wordToGuess;
@@ -11,7 +7,6 @@ public class GameLogic {
     private int tries;
     private GuessedLetters guessedLetters;
 
-    // Конструктор, который инициализирует игру
     public GameLogic(String wordToGuess) {
         this.wordToGuess = wordToGuess;
         this.guessedWord = new StringBuilder("_".repeat(wordToGuess.length()));
@@ -44,45 +39,42 @@ public class GameLogic {
             return false;
         }
     }
-
-    // Метод для обработки введенной буквы
+    /*
     public boolean guessLetter(char letter) {
         if (guessedLetters.hasLetter(letter)) {
-            return false; // Буква уже была угадана
+            return false;
         }
 
-        guessedLetters.addLetter(letter); // Добавляем букву в список угаданных
+        guessedLetters.addLetter(letter);
 
         if (!wordToGuess.contains(String.valueOf(letter))) {
 
-            tries--; // Уменьшаем количество оставшихся попыток, если буква не угадана
+            tries--;
             return false;
         }
-        return true; // Буква угадана
-    }
+        return true;
+    }*/
 
-    // Метод для проверки, выиграна ли игра
     public boolean isGameWon() {
         for (char c : wordToGuess.toCharArray()) {
             if (!guessedLetters.hasLetter(c)) {
-                return false; // Если есть буквы, которые не были угаданы, игра не выиграна
+                return false;
             }
         }
-        return true; // Все буквы угаданы
+        return true;
     }
-
+/*
     public String getWordToGuess() {
         return wordToGuess;
-    }
+    }*/
 
-    // Метод для получения текущего состояния слова с угаданными буквами
     public String getCurrentState() {
         StringBuilder currentState = new StringBuilder();
         for (char c : wordToGuess.toCharArray()) {
             if (guessedLetters.hasLetter(c)) {
-                currentState.append(c); // Если буква угадана, добавляем ее к текущему состоянию
+                currentState.append(c);
             } else {
-                currentState.append('_'); // Если не угадана, ставим подчеркивание
+                currentState.append('_');
             }
         }
         return currentState.toString();

@@ -1,10 +1,5 @@
 package pavdvf;
 
-import pavdvf.GameLogic;
-import pavdvf.GameOutput;
-import pavdvf.UserDialog;
-import pavdvf.WordLoader;
-
 import java.io.IOException;
 
 import java.util.List;
