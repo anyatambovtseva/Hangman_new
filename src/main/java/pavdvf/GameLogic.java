@@ -45,13 +45,6 @@ public class GameLogic {
         }
     }
 
-    // Метод для получения случайного слова (можно заменить на свой список слов)
-    private String getRandomWord() {
-        String[] words = {"кот", "собака", "птица", "слон", "жираф"};
-        Random random = new Random();
-        return words[random.nextInt(words.length)];
-    }
-
     // Метод для обработки введенной буквы
     public boolean guessLetter(char letter) {
         if (guessedLetters.hasLetter(letter)) {
@@ -81,12 +74,7 @@ public class GameLogic {
     public String getWordToGuess() {
         return wordToGuess;
     }
-/*
-    // Метод для проверки, проиграна ли игра
-    public boolean isGameLost() {
-        return remainingTries <= 0; // Если попытки закончились, игра проиграна
-    }
-*/
+
     // Метод для получения текущего состояния слова с угаданными буквами
     public String getCurrentState() {
         StringBuilder currentState = new StringBuilder();

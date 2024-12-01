@@ -1,39 +1,29 @@
 package pavdvf;
 
-public class GameOutput
-{
-
-    public void printWelcomeMessage()
-    {
-        System.out.println("Добро пожаловать в игру Виселица!");
+public class GameOutput {
+    public String getWelcomeMessage() {
+        return "Добро пожаловать в игру Виселица!";
     }
 
-    public void printHelpMessage()
-    {
-        System.out.println("Правила игры:");
-        System.out.println("1. Я загадаю слово на тему животные, а вы будете пытаться его угадать, вводя буквы.");
-        System.out.println("2. У вас есть 5 попыток.");
-        System.out.println("3. Если вы введете букву, которая не входит в слово, попытка будет считаться использованной.");
-        System.out.println("4. Чтобы увидеть это сообщение снова, введите команду /help.");
-        System.out.println("5. Чтобы выйти из игры, введите команду /exit.");
+    public String getHelpMessage() {
+        return "Правила игры:\n" +
+                "1. Я загадаю слово на тему животные, а вы будете пытаться его угадать, вводя буквы.\n" +
+                "2. У вас есть 5 попыток.\n" +
+                "3. Если вы введете букву, которая не входит в слово, попытка будет считаться использованной.\n" +
+                "4. Чтобы увидеть это сообщение снова, введите команду /help.\n" +
+                "5. Чтобы выйти из игры, введите команду /exit.";
     }
 
-    public String printCurrentState(String guessedWord, int remainingTries)
-    {
-        System.out.println("Слово: " + guessedWord);
-        System.out.println("Попытки оставшиеся: " + remainingTries);
-        return "";
+    public String getCurrentState(String guessedWord, int remainingTries) {
+        return "Слово: " + guessedWord + "\n" +
+                "Попытки оставшиеся: " + remainingTries;
     }
 
-    public void printResult(String wordToGuess, boolean isWon)
-    {
-        if (isWon)
-        {
-            System.out.println("Поздравляем! Вы угадали слово: " + wordToGuess);
-        }
-        else
-        {
-            System.out.println("Вы проиграли! Загаданное слово было: " + wordToGuess);
+    public String getResult(String wordToGuess, boolean isWon) {
+        if (isWon) {
+            return "Поздравляем! Вы угадали слово: " + wordToGuess;
+        } else {
+            return "Вы проиграли! Загаданное слово было: " + wordToGuess;
         }
     }
 }

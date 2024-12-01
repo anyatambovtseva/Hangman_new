@@ -14,8 +14,9 @@ import java.util.Random;
 public class TGBot extends TelegramLongPollingBot {
     private String botUsername;
     private String botToken;
+    private WordLoader wordLoader;
+    private GameOutput gameOutput;
     private GameLogic gameLogic;
-    private List<String> words;
 
     public TGBot() {
         Properties props = new Properties();
@@ -23,21 +24,13 @@ public class TGBot extends TelegramLongPollingBot {
             props.load(input);
             botUsername = props.getProperty("bot.name");
             botToken = props.getProperty("bot.token");
-            loadWords("src/main/resources/виселица.txt");
+            wordLoader = new WordLoader();
+            gameOutput = new GameOutput();
+            wordLoader.loadWords("виселица.txt");
         } catch (IOException e) {
             e.printStackTrace();
             botUsername = botToken = "";
         }
-    }
-
-    private void loadWords(String filePath) throws IOException {
-        words = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new FileReader(filePath));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            words.add(line.trim());
-        }
-        reader.close();
     }
 
     @Override
@@ -61,7 +54,7 @@ public class TGBot extends TelegramLongPollingBot {
                     startGame(chatId);
                     break;
                 case "/help":
-                    printHelpMessage(chatId);
+                    sendMessage(chatId, gameOutput.getHelpMessage());
                     break;
                 case "/exit":
                     endGame(chatId);
@@ -74,8 +67,10 @@ public class TGBot extends TelegramLongPollingBot {
     }
 
     private void startGame(long chatId) {
+        List<String> words = wordLoader.getWords();
         String wordToGuess = words.get(new Random().nextInt(words.size()));
         gameLogic = new GameLogic(wordToGuess);
+        sendMessage(chatId, gameOutput.getWelcomeMessage());
         printCurrentState(chatId);
     }
 
@@ -84,25 +79,37 @@ public class TGBot extends TelegramLongPollingBot {
             sendMessage(chatId, "Сначала начните игру с командой /start.");
             return;
         }
-        if (messageText.length() == 1) {
-            char guessedLetter = messageText.charAt(0);
-            boolean correctGuess = gameLogic.guessLetter(guessedLetter);
 
-            if (!correctGuess) {
-                sendMessage(chatId, "Эта буква уже была угадана или ее нет в слове.");
-            }
+        if (messageText.equals("/help")) {
+            sendMessage(chatId, gameOutput.getHelpMessage());
+            return;
+        }
 
-            if (gameLogic.isGameWon()) {
-                printResult(chatId, true);
-                gameLogic = null;
-            } else if (gameLogic.isGameOver()) {
-                printResult(chatId, false);
-                gameLogic = null;
-            } else {
-                printCurrentState(chatId);
-            }
+        if (messageText.equals("/exit")) {
+            endGame(chatId);
+            return;
+        }
+
+        if (messageText.length() != 1 || !gameLogic.isValidCharacter(messageText.charAt(0))) {
+            sendMessage(chatId, "Пожалуйста, введите одну букву русского алфавита.");
+            return;
+        }
+
+        char guess = messageText.charAt(0);
+        if (!gameLogic.makeGuess(guess)) {
+            sendMessage(chatId, "Неправильно! Буква не в слове.");
         } else {
-            sendMessage(chatId, "Пожалуйста, вводите только одну букву.");
+            sendMessage(chatId, "Правильно!");
+        }
+
+        if (gameLogic.isGameWon()) {
+            printResult(chatId, true);
+            gameLogic = null; // Завершение игры
+        } else if (gameLogic.isGameOver()) {
+            printResult(chatId, false);
+            gameLogic = null; // Завершение игры
+        } else {
+            printCurrentState(chatId);
         }
     }
 
@@ -110,31 +117,17 @@ public class TGBot extends TelegramLongPollingBot {
         gameLogic = null;
         sendMessage(chatId, "Вы вышли из игры. Чтобы начать заново, введите /start.");
     }
-
     private void printCurrentState(long chatId) {
-        String currentState = gameLogic.getCurrentState();
+        String currentState = gameLogic.getGuessedWord();
         int remainingTries = gameLogic.getRemainingTries();
-        String message = "Слово: " + currentState + "\nПопытки оставшиеся: " + remainingTries;
+        String message = gameOutput.getCurrentState(currentState, remainingTries);
         sendMessage(chatId, message);
     }
 
     private void printResult(long chatId, boolean isWon) {
         String wordToGuess = gameLogic.getWordToGuess();
-        if (isWon) {
-            sendMessage(chatId, "Поздравляем! Вы угадали слово: " + wordToGuess);
-        } else {
-            sendMessage(chatId, "Вы проиграли! Загаданное слово было: " + wordToGuess);
-        }
-    }
-
-    private void printHelpMessage(long chatId) {
-        String helpMessage = "Правила игры:\n" +
-                "1. Я загадаю слово на тему животные, а вы будете пытаться его угадать, вводя буквы.\n" +
-                "2. У вас есть 5 попыток.\n" +
-                "3. Если вы введете букву, которая не входит в слово, попытка будет считаться использованной.\n" +
-                "4. Чтобы увидеть это сообщение снова, введите команду /help.\n" +
-                "5. Чтобы выйти из игры, введите команду /exit.";
-        sendMessage(chatId, helpMessage);
+        String message = gameOutput.getResult(wordToGuess, isWon);
+        sendMessage(chatId, message);
     }
 
     private void sendMessage(long chatId, String text) {

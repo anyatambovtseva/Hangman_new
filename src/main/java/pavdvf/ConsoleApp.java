@@ -28,7 +28,7 @@ public class ConsoleApp {
             System.out.println("Ошибка при загрузке слов: " + e.getMessage());
             return;
         }
-        gameOutput.printWelcomeMessage();
+        System.out.println(gameOutput.getWelcomeMessage());
         boolean playAgain;
         do {
             playAgain = false;
@@ -37,10 +37,10 @@ public class ConsoleApp {
             GameLogic gameLogic = new GameLogic(wordToGuess);
 
             while (!gameLogic.isGameOver() && !gameLogic.isGameWon()) {
-                gameOutput.printCurrentState(gameLogic.getGuessedWord(), gameLogic.getRemainingTries());
+                System.out.println(gameOutput.getCurrentState(gameLogic.getGuessedWord(), gameLogic.getRemainingTries()));
                 String input = userDialog.getInput("Введите букву: ");
                 if (input.equals("/help")) {
-                    gameOutput.printHelpMessage();
+                    System.out.println(gameOutput.getHelpMessage());
                     continue;
                 }
                 if (input.equals("/exit")) {
@@ -59,7 +59,7 @@ public class ConsoleApp {
                     System.out.println("Правильно!");
                 }
             }
-            gameOutput.printResult(wordToGuess, gameLogic.isGameWon());
+            System.out.println(gameOutput.getResult(wordToGuess, gameLogic.isGameWon()));
             String response = userDialog.getInput("Хотите сыграть еще раз? (да/нет): ");
             if (response.equals("да")) {
                 playAgain = true;
