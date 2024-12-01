@@ -18,10 +18,11 @@ public class GameOutput
         System.out.println("5. Чтобы выйти из игры, введите команду /exit.");
     }
 
-    public void printCurrentState(String guessedWord, int remainingTries)
+    public String printCurrentState(String guessedWord, int remainingTries)
     {
         System.out.println("Слово: " + guessedWord);
         System.out.println("Попытки оставшиеся: " + remainingTries);
+        return "";
     }
 
     public void printResult(String wordToGuess, boolean isWon)

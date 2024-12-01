@@ -95,7 +95,7 @@ public class TGBot extends TelegramLongPollingBot {
             if (gameLogic.isGameWon()) {
                 printResult(chatId, true);
                 gameLogic = null;
-            } else if (gameLogic.isGameLost()) {
+            } else if (gameLogic.isGameOver()) {
                 printResult(chatId, false);
                 gameLogic = null;
             } else {

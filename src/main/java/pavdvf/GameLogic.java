@@ -5,15 +5,44 @@ import java.util.List;
 import java.util.Random;
 
 public class GameLogic {
-    private String wordToGuess; // Загаданное слово
-    private List<Character> guessedLetters; // Угаданные буквы
-    private int remainingTries; // Оставшиеся попытки
+    private final int MAX_TRIES = 5;
+    private String wordToGuess;
+    private StringBuilder guessedWord;
+    private int tries;
+    private GuessedLetters guessedLetters;
 
     // Конструктор, который инициализирует игру
     public GameLogic(String wordToGuess) {
-        this.wordToGuess = getRandomWord(); // Получаем случайное слово
-        this.guessedLetters = new ArrayList<>(); // Инициализируем список угаданных букв
-        this.remainingTries = 5; // Устанавливаем количество попыток
+        this.wordToGuess = wordToGuess;
+        this.guessedWord = new StringBuilder("_".repeat(wordToGuess.length()));
+        this.tries = 0;
+        this.guessedLetters = new GuessedLetters();
+    }
+
+    public boolean makeGuess(char guess)
+    {
+        if (guessedLetters.hasLetter(guess))
+        {
+            return false;
+        }
+        guessedLetters.addLetter(guess);
+
+        if (wordToGuess.indexOf(guess) >= 0)
+        {
+            for (int i = 0; i < wordToGuess.length(); i++)
+            {
+                if (wordToGuess.charAt(i) == guess)
+                {
+                    guessedWord.setCharAt(i, guess);
+                }
+            }
+            return true;
+        }
+        else
+        {
+            tries++;
+            return false;
+        }
     }
 
     // Метод для получения случайного слова (можно заменить на свой список слов)
@@ -25,14 +54,15 @@ public class GameLogic {
 
     // Метод для обработки введенной буквы
     public boolean guessLetter(char letter) {
-        if (guessedLetters.contains(letter)) {
+        if (guessedLetters.hasLetter(letter)) {
             return false; // Буква уже была угадана
         }
 
-        guessedLetters.add(letter); // Добавляем букву в список угаданных
+        guessedLetters.addLetter(letter); // Добавляем букву в список угаданных
 
         if (!wordToGuess.contains(String.valueOf(letter))) {
-            remainingTries--; // Уменьшаем количество оставшихся попыток, если буква не угадана
+
+            tries--; // Уменьшаем количество оставшихся попыток, если буква не угадана
             return false;
         }
         return true; // Буква угадана
@@ -41,23 +71,27 @@ public class GameLogic {
     // Метод для проверки, выиграна ли игра
     public boolean isGameWon() {
         for (char c : wordToGuess.toCharArray()) {
-            if (!guessedLetters.contains(c)) {
+            if (!guessedLetters.hasLetter(c)) {
                 return false; // Если есть буквы, которые не были угаданы, игра не выиграна
             }
         }
         return true; // Все буквы угаданы
     }
 
+    public String getWordToGuess() {
+        return wordToGuess;
+    }
+/*
     // Метод для проверки, проиграна ли игра
     public boolean isGameLost() {
         return remainingTries <= 0; // Если попытки закончились, игра проиграна
     }
-
+*/
     // Метод для получения текущего состояния слова с угаданными буквами
     public String getCurrentState() {
         StringBuilder currentState = new StringBuilder();
         for (char c : wordToGuess.toCharArray()) {
-            if (guessedLetters.contains(c)) {
+            if (guessedLetters.hasLetter(c)) {
                 currentState.append(c); // Если буква угадана, добавляем ее к текущему состоянию
             } else {
                 currentState.append('_'); // Если не угадана, ставим подчеркивание
@@ -66,13 +100,24 @@ public class GameLogic {
         return currentState.toString();
     }
 
-    // Геттеры для оставшихся попыток и загаданного слова
-    public int getRemainingTries() {
-        return remainingTries;
+    public boolean isGameOver()
+    {
+        return tries >= MAX_TRIES;
     }
 
-    public String getWordToGuess() {
-        return wordToGuess;
+    public String getGuessedWord()
+    {
+        return guessedWord.toString();
     }
+
+    public int getRemainingTries()
+    {
+        return MAX_TRIES - tries;
+    }
+
+    public boolean isValidCharacter(char c)
+    {
+        return (c >= 'а' && c <= 'я') || c == 'ё';
+    }
+
 }
-
