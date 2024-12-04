@@ -1,18 +1,20 @@
 package pavdvf;
 
 import java.io.IOException;
-
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 public class ConsoleApp {
     private WordLoader wordLoader;
     private UserDialog userDialog;
     private GameOutput gameOutput;
+    private Scanner scanner;
 
-    public ConsoleApp() {
+    public ConsoleApp(Scanner scanner) {
+        this.scanner = scanner;
         wordLoader = new WordLoader();
-        userDialog = new UserDialog();
+        userDialog = new UserDialog(scanner);
         gameOutput = new GameOutput();
     }
 
@@ -30,7 +32,6 @@ public class ConsoleApp {
             List<String> words = wordLoader.getWords();
             String wordToGuess = words.get(new Random().nextInt(words.size()));
             GameLogic gameLogic = new GameLogic(wordToGuess);
-
             while (!gameLogic.isGameOver() && !gameLogic.isGameWon()) {
                 System.out.println(gameOutput.getCurrentState(gameLogic.getGuessedWord(), gameLogic.getRemainingTries()));
                 String input = userDialog.getInput("Введите букву: ");
@@ -40,11 +41,10 @@ public class ConsoleApp {
                 }
                 if (input.equals("/exit")) {
                     System.out.println("Вы вышли из игры. Спасибо за игру!");
-                    userDialog.close();
                     return;
                 }
                 if (input.length() != 1 || !gameLogic.isValidCharacter(input.charAt(0))) {
-                    System.out.println("Пожалуйста, введите одну букву русского алфавита.");
+                    System.out.println("Пожалуйста, введите одну маленькую букву русского алфавита.");
                     continue;
                 }
                 char guess = input.charAt(0);
@@ -59,8 +59,6 @@ public class ConsoleApp {
             if (response.equals("да")) {
                 playAgain = true;
             }
-        }
-        while (playAgain);
-        userDialog.close();
+        } while (playAgain);
     }
 }

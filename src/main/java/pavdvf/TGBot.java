@@ -93,7 +93,7 @@ public class TGBot extends TelegramLongPollingBot {
         }
 
         if (messageText.length() != 1 || !gameLogic.isValidCharacter(messageText.charAt(0))) {
-            sendMessage(chatId, "Пожалуйста, введите одну букву русского алфавита.");
+            sendMessage(chatId, "Пожалуйста, введите одну маленькую букву русского алфавита.");
             return;
         }
 

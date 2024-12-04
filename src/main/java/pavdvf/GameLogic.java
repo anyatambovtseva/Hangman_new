@@ -39,21 +39,6 @@ public class GameLogic {
             return false;
         }
     }
-    /*
-    public boolean guessLetter(char letter) {
-        if (guessedLetters.hasLetter(letter)) {
-            return false;
-        }
-
-        guessedLetters.addLetter(letter);
-
-        if (!wordToGuess.contains(String.valueOf(letter))) {
-
-            tries--;
-            return false;
-        }
-        return true;
-    }*/
 
     public boolean isGameWon() {
         for (char c : wordToGuess.toCharArray()) {
@@ -63,10 +48,6 @@ public class GameLogic {
         }
         return true;
     }
-/*
-    public String getWordToGuess() {
-        return wordToGuess;
-    }*/
 
     public String getCurrentState() {
         StringBuilder currentState = new StringBuilder();
