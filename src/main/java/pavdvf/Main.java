@@ -7,25 +7,32 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws TelegramApiException {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Какого бота запустить? (1 - консольный, 2 - телеграмм, 3 - оба): ");
-        String input = scanner.nextLine();
-
-        try {
-            if (input.equals("2") || input.equals("3")) {
-                TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-                TGBot bot = new TGBot();
-                botsApi.registerBot(bot);
-                System.out.println("Телеграмм бот запущен!");
-            }
-
-            if (input.equals("1") || input.equals("3")) {
-                new Thread(() -> new ConsoleApp(scanner).start()).start();
-                System.out.println("Консольный бот запущен!");
-            }
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
+        if(args[0].equals("telegram") && args.length != 0)
+        {
+            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+            TGBot bot = new TGBot();
+            botsApi.registerBot(bot);
+            System.out.println("Телеграмм бот запущен!");
+        }
+        else if(args[0].equals("console") && args.length != 0)
+        {
+            new Thread(() -> new ConsoleApp(scanner).start()).start();
+            System.out.println("Консольный бот запущен!");
+        }
+        else if(args[0].equals("console_AND_telegram") && args.length != 0)
+        {
+            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+            TGBot bot = new TGBot();
+            botsApi.registerBot(bot);
+            System.out.println("Телеграмм бот запущен!");
+            new Thread(() -> new ConsoleApp(scanner).start()).start();
+            System.out.println("Консольный бот запущен!");
+        }
+        else
+        {
+            System.out.println("введите правильные аргументы!");
         }
     }
 }
