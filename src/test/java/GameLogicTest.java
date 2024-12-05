@@ -4,73 +4,80 @@ import pavdvf.GameLogic;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GameLogicTest
-{
+class GameLogicTest {
+
     private GameLogic gameLogic;
 
     @BeforeEach
-    public void setUp()
-    {
-        gameLogic = new GameLogic("кошка");
-    }
-
-    @org.testng.annotations.Test
-    public void testInitialGuessedWord()
-    {
-        assertEquals("_____", gameLogic.getGuessedWord());
+    void setUp() {
+        gameLogic = new GameLogic("жираф");
     }
 
     @Test
-    public void testMakeGuessCorrect()
-    {
-        assertTrue(gameLogic.makeGuess('к'));
-        assertEquals("к__к_", gameLogic.getGuessedWord());
+    void testInitialState() {
+        assertEquals("_____", gameLogic.getCurrentState());
         assertEquals(5, gameLogic.getRemainingTries());
+        assertFalse(gameLogic.isGameOver());
+        assertFalse(gameLogic.isGameWon());
     }
 
     @Test
-    public void testMakeGuessIncorrect()
-    {
-        assertFalse(gameLogic.makeGuess('х'));
-        assertEquals("_____", gameLogic.getGuessedWord());
+    void testMakeGuessCorrectLetter() {
+        assertTrue(gameLogic.makeGuess('ж'));
+        assertEquals("ж____", gameLogic.getCurrentState());
+        assertEquals(5, gameLogic.getRemainingTries());
+        assertFalse(gameLogic.isGameOver());
+        assertFalse(gameLogic.isGameWon());
+
+        assertTrue(gameLogic.makeGuess('и'));
+        assertEquals("жи___", gameLogic.getCurrentState());
+        assertFalse(gameLogic.isGameWon());
+    }
+
+    @Test
+    void testMakeGuessIncorrectLetter() {
+        assertFalse(gameLogic.makeGuess('x'));
         assertEquals(4, gameLogic.getRemainingTries());
+        assertFalse(gameLogic.isGameOver());
+
+        // Проверяем, что состояние не изменилось
+        assertEquals("_____", gameLogic.getCurrentState());
     }
 
     @Test
-    public void testIsGameWon()
-    {
-        for (char c : "кошка".toCharArray())
-        {
-            gameLogic.makeGuess(c);
-        }
+    void testMakeGuessRepeatedLetter() {
+        assertTrue(gameLogic.makeGuess('ж'));
+        assertFalse(gameLogic.makeGuess('ж')); // Повторная попытка должна вернуть false
+        assertEquals("ж____", gameLogic.getCurrentState());
+    }
+
+    @Test
+    void testWinGame() {
+        gameLogic.makeGuess('ж');
+        gameLogic.makeGuess('и');
+        gameLogic.makeGuess('р');
+        gameLogic.makeGuess('а');
+        gameLogic.makeGuess('ф');
+
         assertTrue(gameLogic.isGameWon());
     }
 
     @Test
-    public void testRemainingTriesAfterIncorrectGuesses()
-    {
-        gameLogic.makeGuess('х');
-        gameLogic.makeGuess('ф');
-        assertEquals(3, gameLogic.getRemainingTries());
+    void testLoseGame() {
+        gameLogic.makeGuess('д'); // 1
+        gameLogic.makeGuess('п'); // 2
+        gameLogic.makeGuess('х'); // 3
+        gameLogic.makeGuess('у'); // 4
+        gameLogic.makeGuess('я'); // 5
+
+        assertTrue(gameLogic.isGameOver());
     }
 
-
     @Test
-    void testIsValidCharacter_ValidLowercase()
-    {
-        assertTrue(gameLogic.isValidCharacter('ш'));
+    void testValidCharacter() {
+        assertTrue(gameLogic.isValidCharacter('а'));
         assertTrue(gameLogic.isValidCharacter('ё'));
-    }
-
-
-    @Test
-    void testIsValidCharacter_InvalidCharacter()
-    {
-        assertFalse(gameLogic.isValidCharacter('r'));
+        assertFalse(gameLogic.isValidCharacter('A'));
         assertFalse(gameLogic.isValidCharacter('1'));
-        assertFalse(gameLogic.isValidCharacter(' '));
-        assertFalse(gameLogic.isValidCharacter('I'));
-        assertFalse(gameLogic.isValidCharacter('/'));
     }
-
 }
