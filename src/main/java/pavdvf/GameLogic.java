@@ -1,16 +1,13 @@
-import java.util.List;
-import java.util.Random;
+package pavdvf;
 
-public class GameLogic
-{
+public class GameLogic {
     private final int MAX_TRIES = 5;
     private String wordToGuess;
     private StringBuilder guessedWord;
     private int tries;
     private GuessedLetters guessedLetters;
 
-    public GameLogic(String wordToGuess)
-    {
+    public GameLogic(String wordToGuess) {
         this.wordToGuess = wordToGuess;
         this.guessedWord = new StringBuilder("_".repeat(wordToGuess.length()));
         this.tries = 0;
@@ -43,9 +40,25 @@ public class GameLogic
         }
     }
 
-    public boolean isGameWon()
-    {
-        return guessedWord.toString().equals(wordToGuess);
+    public boolean isGameWon() {
+        for (char c : wordToGuess.toCharArray()) {
+            if (!guessedLetters.hasLetter(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public String getCurrentState() {
+        StringBuilder currentState = new StringBuilder();
+        for (char c : wordToGuess.toCharArray()) {
+            if (guessedLetters.hasLetter(c)) {
+                currentState.append(c);
+            } else {
+                currentState.append('_');
+            }
+        }
+        return currentState.toString();
     }
 
     public boolean isGameOver()
@@ -67,4 +80,5 @@ public class GameLogic
     {
         return (c >= 'а' && c <= 'я') || c == 'ё';
     }
+
 }
