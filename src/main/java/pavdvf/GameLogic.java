@@ -1,11 +1,12 @@
 package pavdvf;
 
 public class GameLogic {
-    private final int MAX_TRIES = 5;
-    private String wordToGuess;
-    private StringBuilder guessedWord;
+
+    private static final int MAX_TRIES = 5;
+    private final String wordToGuess;
+    private final StringBuilder guessedWord;
     private int tries;
-    private GuessedLetters guessedLetters;
+    private final GuessedLetters guessedLetters;
 
     public GameLogic(String wordToGuess) {
         this.wordToGuess = wordToGuess;
@@ -14,27 +15,25 @@ public class GameLogic {
         this.guessedLetters = new GuessedLetters();
     }
 
-    public boolean makeGuess(char guess)
-    {
-        if (guessedLetters.hasLetter(guess))
-        {
+    public String getWordToGuess() {
+        return wordToGuess;
+    }
+
+    public boolean makeGuess(char guess) {
+        if (guessedLetters.hasLetter(guess)) {
             return false;
         }
+
         guessedLetters.addLetter(guess);
 
-        if (wordToGuess.indexOf(guess) >= 0)
-        {
-            for (int i = 0; i < wordToGuess.length(); i++)
-            {
-                if (wordToGuess.charAt(i) == guess)
-                {
+        if (wordToGuess.indexOf(guess) >= 0) {
+            for (int i = 0; i < wordToGuess.length(); i++) {
+                if (wordToGuess.charAt(i) == guess) {
                     guessedWord.setCharAt(i, guess);
                 }
             }
             return true;
-        }
-        else
-        {
+        } else {
             tries++;
             return false;
         }
@@ -49,6 +48,7 @@ public class GameLogic {
         return true;
     }
 
+
     public String getCurrentState() {
         StringBuilder currentState = new StringBuilder();
         for (char c : wordToGuess.toCharArray()) {
@@ -61,24 +61,19 @@ public class GameLogic {
         return currentState.toString();
     }
 
-    public boolean isGameOver()
-    {
+    public boolean isGameOver() {
         return tries >= MAX_TRIES;
     }
 
-    public String getGuessedWord()
-    {
+    public String getGuessedWord() {
         return guessedWord.toString();
     }
 
-    public int getRemainingTries()
-    {
+    public int getRemainingTries() {
         return MAX_TRIES - tries;
     }
 
-    public boolean isValidCharacter(char c)
-    {
+    public boolean isValidCharacter(char c) {
         return (c >= 'а' && c <= 'я') || c == 'ё';
     }
-
 }
