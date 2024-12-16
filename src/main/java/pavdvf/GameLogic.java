@@ -40,25 +40,7 @@ public class GameLogic {
     }
 
     public boolean isGameWon() {
-        for (char c : wordToGuess.toCharArray()) {
-            if (!guessedLetters.hasLetter(c)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-    public String getCurrentState() {
-        StringBuilder currentState = new StringBuilder();
-        for (char c : wordToGuess.toCharArray()) {
-            if (guessedLetters.hasLetter(c)) {
-                currentState.append(c);
-            } else {
-                currentState.append('_');
-            }
-        }
-        return currentState.toString();
+        return guessedWord.toString().equals(wordToGuess);
     }
 
     public boolean isGameOver() {

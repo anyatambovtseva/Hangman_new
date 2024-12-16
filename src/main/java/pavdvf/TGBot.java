@@ -24,6 +24,7 @@ public class TGBot extends TelegramLongPollingBot {
     private GameOutput gameOutput;
     private HashMap<Long, GameLogic> userGames;
     private UserData userData;
+    private Hint hint;
 
     private final List<String> attemptImages = List.of(
             "src/main/resources/игра_виселица_5.jpg",
@@ -55,6 +56,8 @@ public class TGBot extends TelegramLongPollingBot {
             if (botUsername == null || botToken == null || botUsername.isEmpty() || botToken.isEmpty()) {
                 throw new IllegalArgumentException("Bot username and token cannot be empty!");
             }
+
+            hint = new Hint(userData);
 
         } catch (IOException | IllegalArgumentException e) {
             e.printStackTrace();
@@ -143,32 +146,15 @@ public class TGBot extends TelegramLongPollingBot {
             return;
         }
 
-        int coins = userData.getCoins(chatId);
-        if (coins < 1) {
-            sendMessage(chatId, "У вас недостаточно монеток для использования подсказки.");
-            return;
-        }
-
-        userData.updateCoins(chatId, coins - 1);
         GameLogic gameLogic = userGames.get(chatId);
         if (gameLogic == null) {
             sendMessage(chatId, "Ошибка. Игра не найдена.");
             return;
         }
 
-        String hint = giveHint(gameLogic);
-        sendMessage(chatId, "Вот подсказка: " + hint);
+        String hintMessage = hint.provideHint(chatId, gameLogic);
+        sendMessage(chatId, hintMessage);
         printCurrentState(chatId);
-    }
-
-    private String giveHint(GameLogic gameLogic) {
-        String word = gameLogic.getWordToGuess();
-        for (int i = 0; i < word.length(); i++) {
-            if (gameLogic.getGuessedWord().charAt(i) != word.charAt(i)) {
-                return "В этом слове есть буква: " + word.charAt(i);
-            }
-        }
-        return "Все буквы уже угаданы!";
     }
 
     private void handleGuess(long chatId, String messageText) {
