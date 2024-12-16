@@ -198,7 +198,8 @@ public class TGBot extends TelegramLongPollingBot {
         GameLogic gameLogic = userGames.get(chatId);
         if (gameLogic != null) {
             String image = attemptImages.get(5 - gameLogic.getRemainingTries());
-            sendPhoto(chatId, image, gameOutput.getCurrentState(gameLogic.getGuessedWord(), gameLogic.getRemainingTries()));
+            sendPhoto(chatId, image, gameOutput.getCurrentState(gameLogic.getGuessedWord(),
+                    gameLogic.getRemainingTries()));
         }
     }
 

@@ -33,7 +33,8 @@ public class ConsoleApp {
             String wordToGuess = words.get(new Random().nextInt(words.size()));
             GameLogic gameLogic = new GameLogic(wordToGuess);
             while (!gameLogic.isGameOver() && !gameLogic.isGameWon()) {
-                System.out.println(gameOutput.getCurrentState(gameLogic.getGuessedWord(), gameLogic.getRemainingTries()));
+                System.out.println(gameOutput.getCurrentState(gameLogic.getGuessedWord(),
+                        gameLogic.getRemainingTries()));
                 String input = userDialog.getInput("Введите букву: ");
                 if (input.equals("/help")) {
                     System.out.println(gameOutput.getHelpMessage());
