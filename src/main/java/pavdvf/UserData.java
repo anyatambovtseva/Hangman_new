@@ -78,13 +78,6 @@ public class UserData {
         }
     }
 
-    public void removeUser(long userId) {
-        if (userCoins.containsKey(userId)) {
-            userCoins.remove(userId);
-            saveUserData();
-        }
-    }
-
     public boolean userExists(long userId) {
         return userCoins.containsKey(userId);
     }

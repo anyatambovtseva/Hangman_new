@@ -179,6 +179,7 @@ public class TGBot extends TelegramLongPollingBot {
         if (gameLogic.isGameWon()) {
             int coins = userData.getCoins(chatId);
             userData.updateCoins(chatId, coins + 1);
+            sendMessage(chatId, "Ваши монеты увеличены! Теперь у вас: " + (coins + 1));
             printResult(chatId, true);
             userGames.remove(chatId);
         } else if (gameLogic.isGameOver()) {

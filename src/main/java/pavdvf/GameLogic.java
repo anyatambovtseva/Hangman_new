@@ -70,5 +70,4 @@ public class GameLogic {
         }
         return currentState.toString();
     }
-
 }
