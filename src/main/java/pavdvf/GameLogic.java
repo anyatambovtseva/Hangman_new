@@ -58,4 +58,17 @@ public class GameLogic {
     public boolean isValidCharacter(char c) {
         return (c >= 'а' && c <= 'я') || c == 'ё';
     }
+
+    public String getCurrentState() {
+        StringBuilder currentState = new StringBuilder();
+        for (char c : wordToGuess.toCharArray()) {
+            if (guessedLetters.hasLetter(c)) {
+                currentState.append(c);
+            } else {
+                currentState.append('_');
+            }
+        }
+        return currentState.toString();
+    }
+
 }
