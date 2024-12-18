@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class UserData {
 
-    private static final String FILE_PATH = "user_data.txt";
+    private static final String DIRECTORY_PATH = "user_data/";
     private Map<Long, Integer> userCoins;
 
     public UserData() {
@@ -20,45 +20,38 @@ public class UserData {
     }
 
     private void loadUserData() {
-        File file = new File(FILE_PATH);
-
-        if (!file.exists()) {
-            try {
-                if (!file.createNewFile()) {
-                    System.out.println("Не удалось создать файл для данных пользователей.");
-                }
-            } catch (IOException e) {
-                System.out.println("Ошибка при создании файла: " + e.getMessage());
+        File directory = new File(DIRECTORY_PATH);
+        if (!directory.exists()) {
+            if (!directory.mkdirs()) {
+                System.out.println("Не удалось создать папку для данных пользователей.");
             }
         }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(" ");
-                if (parts.length == 2) {
-                    try {
-                        long userId = Long.parseLong(parts[0]);
-                        int coins = Integer.parseInt(parts[1]);
-                        userCoins.put(userId, coins);
-                    } catch (NumberFormatException e) {
-                        System.out.println("Ошибка формата данных в строке: " + line);
+        File[] userFiles = directory.listFiles();
+        if (userFiles != null) {
+            for (File file : userFiles) {
+                if (file.isFile()) {
+                    long userId = Long.parseLong(file.getName().replace(".txt", ""));
+                    try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                        String line = reader.readLine();
+                        if (line != null) {
+                            int coins = Integer.parseInt(line);
+                            userCoins.put(userId, coins);
+                        }
+                    } catch (IOException e) {
+                        System.out.println("Ошибка при чтении файла для пользователя" + userId + ": " + e.getMessage());
                     }
                 }
             }
-        } catch (IOException e) {
-            System.out.println("Ошибка при чтении файла: " + e.getMessage());
         }
     }
 
-    private void saveUserData() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
-            for (Map.Entry<Long, Integer> entry : userCoins.entrySet()) {
-                writer.write(entry.getKey() + " " + entry.getValue());
-                writer.newLine();
-            }
+    private void saveUserData(long userId) {
+        File userFile = new File(DIRECTORY_PATH + userId + ".txt");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(userFile))) {
+            writer.write(String.valueOf(userCoins.get(userId)));
         } catch (IOException e) {
-            System.out.println("Ошибка при записи в файл: " + e.getMessage());
+            System.out.println("Ошибка при записи в файл для пользователя " + userId + ": " + e.getMessage());
         }
     }
 
@@ -68,17 +61,18 @@ public class UserData {
 
     public void updateCoins(long userId, int coins) {
         userCoins.put(userId, coins);
-        saveUserData();
+        saveUserData(userId);
     }
 
     public void addUser(long userId) {
         if (!userCoins.containsKey(userId)) {
             userCoins.put(userId, 2);
-            saveUserData();
+            saveUserData(userId);
         }
     }
 
     public boolean userExists(long userId) {
-        return userCoins.containsKey(userId);
+        File userFile = new File(DIRECTORY_PATH + userId + ".txt");
+        return userFile.exists();
     }
 }

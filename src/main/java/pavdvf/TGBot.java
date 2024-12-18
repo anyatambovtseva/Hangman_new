@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -22,7 +23,7 @@ public class TGBot extends TelegramLongPollingBot {
     private String botToken;
     private WordLoader wordLoader;
     private GameOutput gameOutput;
-    private HashMap<Long, GameLogic> userGames;
+    private Map<Long, GameLogic> userGames;
     private UserData userData;
     private Hint hint;
 
