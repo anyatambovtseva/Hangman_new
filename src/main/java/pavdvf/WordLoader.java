@@ -7,31 +7,26 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WordLoader
-{
+public class WordLoader {
+
     private List<String> words;
 
-    public WordLoader()
-    {
+    public WordLoader() {
         words = new ArrayList<>();
     }
 
-    public void loadWords(String filePath) throws IOException
-    {
+    public void loadWords(String filePath) throws IOException {
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filePath);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream)))
-        {
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
 
             String line;
-            while ((line = reader.readLine()) != null)
-            {
+            while ((line = reader.readLine()) != null) {
                 words.add(line.trim());
             }
         }
     }
 
-    public List<String> getWords()
-    {
+    public List<String> getWords() {
         return words;
     }
 }
