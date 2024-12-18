@@ -42,8 +42,8 @@ public class Main {
                 new Thread(() -> new ConsoleApp(scanner).start()).start();
                 System.out.println("Консольный бот запущен!");
             }
-            default -> System.out.println("Ошибка: введены неправильные аргументы. " +
-                    "Используйте 'telegram', 'console' или 'console_AND_telegram'.");
+            default -> System.out.println("Ошибка: введены неправильные аргументы. "
+                    + "Используйте 'telegram', 'console' или 'console_AND_telegram'.");
         }
     }
 }

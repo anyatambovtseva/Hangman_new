@@ -18,17 +18,14 @@ public class GameOutput {
     }
 
     public String getCurrentState(String guessedWord, int remainingTries) {
-        return "Слово: " + guessedWord + "\n"
-                + "Попытки оставшиеся: " + remainingTries;
+        return "Слово: " + guessedWord + "\n" + "Попытки оставшиеся: " + remainingTries;
     }
 
     public String getResult(String wordToGuess, boolean isWon) {
         if (isWon) {
-            return "Поздравляем! Вы угадали слово: "
-                    + wordToGuess;
+            return "Поздравляем! Вы угадали слово: " + wordToGuess;
         } else {
-            return "Вы проиграли! Загаданное слово было: "
-                    + wordToGuess;
+            return "Вы проиграли! Загаданное слово было: " + wordToGuess;
         }
     }
 }
